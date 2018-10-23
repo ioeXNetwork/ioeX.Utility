@@ -5,7 +5,7 @@ import (
 	"crypto/sha256"
 	"errors"
 
-	. "github.com/ioeX/ioeX.Utility/common"
+	. "github.com/ioeXNetwork/ioeX.Utility/common"
 	"golang.org/x/crypto/ripemd160"
 )
 

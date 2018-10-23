@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/ioeX/ioeX.Utility/common"
-	"github.com/ioeX/ioeX.Utility/p2p"
+	"github.com/ioeXNetwork/ioeX.Utility/common"
+	"github.com/ioeXNetwork/ioeX.Utility/p2p"
 )
 
 const defaultInvListSize = 100
@@ -24,7 +24,7 @@ func NewInventory() *Inventory {
 // AddInvVect adds an inventory vector to the message.
 func (msg *Inventory) AddInvVect(iv *InvVect) error {
 	if len(msg.InvList)+1 > MaxInvPerMsg {
-		return fmt.Errorf("GetData.AddInvVect too many invvect in message [max %v]", MaxInvPerMsg)
+		return fmt.Errorf("AddInvVect too many invvect in message [max %v]", MaxInvPerMsg)
 	}
 
 	msg.InvList = append(msg.InvList, iv)
@@ -35,9 +35,12 @@ func (msg *Inventory) CMD() string {
 	return p2p.CmdInv
 }
 
+func (msg *Inventory) MaxLength() uint32 {
+	return 4 + (MaxInvPerMsg * maxInvVectPayload)
+}
+
 func (msg *Inventory) Serialize(writer io.Writer) error {
-	count := uint32(len(msg.InvList))
-	if err := common.WriteElement(writer, count); err != nil {
+	if err := common.WriteUint32(writer, uint32(len(msg.InvList))); err != nil {
 		return err
 	}
 
@@ -51,9 +54,13 @@ func (msg *Inventory) Serialize(writer io.Writer) error {
 }
 
 func (msg *Inventory) Deserialize(reader io.Reader) error {
-	var count uint32
-	if err := common.ReadElement(reader, &count); err != nil {
+	count, err := common.ReadUint32(reader)
+	if err != nil {
 		return err
+	}
+	// Limit to max inventory vectors per message.
+	if count > MaxInvPerMsg {
+		return fmt.Errorf("too many invvect in message [%v]", count)
 	}
 
 	msg.InvList = make([]*InvVect, 0, count)

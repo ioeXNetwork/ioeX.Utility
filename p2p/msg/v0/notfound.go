@@ -3,8 +3,8 @@ package v0
 import (
 	"io"
 
-	"github.com/ioeX/ioeX.Utility/common"
-	"github.com/ioeX/ioeX.Utility/p2p"
+	"github.com/ioeXNetwork/ioeX.Utility/common"
+	"github.com/ioeXNetwork/ioeX.Utility/p2p"
 )
 
 type NotFound struct {
@@ -17,6 +17,10 @@ func NewNotFound(hash common.Uint256) *NotFound {
 
 func (msg *NotFound) CMD() string {
 	return p2p.CmdNotFound
+}
+
+func (msg *NotFound) MaxLength() uint32 {
+	return common.UINT256SIZE
 }
 
 func (msg *NotFound) Serialize(w io.Writer) error {

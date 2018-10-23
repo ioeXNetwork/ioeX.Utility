@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	"encoding/hex"
-	"github.com/ioeX/ioeX.Utility/common"
+	"github.com/ioeXNetwork/ioeX.Utility/common"
 )
 
 func TestToProgramHash(t *testing.T) {

@@ -3,13 +3,17 @@ package msg
 import (
 	"io"
 
-	"github.com/ioeX/ioeX.Utility/p2p"
+	"github.com/ioeXNetwork/ioeX.Utility/p2p"
 )
 
 type VerAck struct{}
 
 func (msg *VerAck) CMD() string {
 	return p2p.CmdVerAck
+}
+
+func (msg *VerAck) MaxLength() uint32 {
+	return 0
 }
 
 func (msg *VerAck) Serialize(io.Writer) error {

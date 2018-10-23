@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/ioeX/ioeX.Utility/common"
-	"github.com/ioeX/ioeX.Utility/p2p"
+	"github.com/ioeXNetwork/ioeX.Utility/common"
+	"github.com/ioeXNetwork/ioeX.Utility/p2p"
 )
 
 // RejectCode represents a numeric value by which a remote peer indicates
@@ -74,6 +74,10 @@ func NewReject(cmd string, code RejectCode, reason string) *Reject {
 
 func (msg *Reject) CMD() string {
 	return p2p.CmdReject
+}
+
+func (msg *Reject) MaxLength() uint32 {
+	return p2p.MaxMessagePayload
 }
 
 func (msg *Reject) Serialize(writer io.Writer) error {

@@ -3,7 +3,7 @@ package crypto
 import (
 	"errors"
 
-	. "github.com/ioeX/ioeX.Utility/common"
+	. "github.com/ioeXNetwork/ioeX.Utility/common"
 )
 
 type MerkleTree struct {

@@ -3,8 +3,8 @@ package msg
 import (
 	"io"
 
-	"github.com/ioeX/ioeX.Utility/common"
-	"github.com/ioeX/ioeX.Utility/p2p"
+	"github.com/ioeXNetwork/ioeX.Utility/common"
+	"github.com/ioeXNetwork/ioeX.Utility/p2p"
 )
 
 type Tx struct {
@@ -17,6 +17,10 @@ func NewTx(tx common.Serializable) *Tx {
 
 func (msg *Tx) CMD() string {
 	return p2p.CmdTx
+}
+
+func (msg *Tx) MaxLength() uint32 {
+	return MaxBlockSize
 }
 
 func (msg *Tx) Serialize(writer io.Writer) error {

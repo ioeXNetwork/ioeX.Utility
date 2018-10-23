@@ -1,10 +1,10 @@
 package msg
 
 import (
-	"io"
 	"encoding/binary"
+	"io"
 
-	"github.com/ioeX/ioeX.Utility/p2p"
+	"github.com/ioeXNetwork/ioeX.Utility/p2p"
 )
 
 type Version struct {
@@ -19,6 +19,10 @@ type Version struct {
 
 func (msg *Version) CMD() string {
 	return p2p.CmdVersion
+}
+
+func (msg *Version) MaxLength() uint32 {
+	return 35
 }
 
 func (msg *Version) Serialize(writer io.Writer) error {

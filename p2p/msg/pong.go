@@ -1,6 +1,6 @@
 package msg
 
-import "github.com/ioeX/ioeX.Utility/p2p"
+import "github.com/ioeXNetwork/ioeX.Utility/p2p"
 
 type Pong struct {
 	Ping

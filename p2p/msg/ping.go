@@ -1,10 +1,10 @@
 package msg
 
 import (
-	"io"
 	"encoding/binary"
+	"io"
 
-	"github.com/ioeX/ioeX.Utility/p2p"
+	"github.com/ioeXNetwork/ioeX.Utility/p2p"
 )
 
 type Ping struct {
@@ -19,6 +19,10 @@ func NewPing(nonce uint32) *Ping {
 
 func (msg *Ping) CMD() string {
 	return p2p.CmdPing
+}
+
+func (msg *Ping) MaxLength() uint32 {
+	return 8
 }
 
 func (msg *Ping) Serialize(writer io.Writer) error {
