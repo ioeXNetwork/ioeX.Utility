@@ -13,6 +13,8 @@ import (
 )
 
 const (
+	// JSON-RPC protocol version.
+	Version = "2.0"
 	// JSON-RPC protocol error codes.
 	ParseError     = -32700
 	InvalidRequest = -32600
@@ -25,36 +27,25 @@ const (
 // Handler is the registered method to handle a http request.
 type Handler func(util.Params) (interface{}, error)
 
-// Error is the error data for the JSON-RPC request.
-type Error struct {
-	Id      uint32 `json:"id,omitempty"`
-	Code    int    `json:"code"`
-	Message string `json:"message"`
-}
-
-func (e Error) Error() string {
-	return e.Message
-}
-
 // Request represent the standard JSON-RPC request data structure.
 type Request struct {
-	Id      uint32      `json:"id,omitempty"`
-	Version string      `json:"jsonrpc,omitempty"`
+	Id      interface{} `json:"id"`
+	Version string      `json:"jsonrpc"`
 	Method  string      `json:"method"`
 	Params  interface{} `json:"params"`
 }
 
 // Response represent the standard JSON-RPC Response data structure.
 type Response struct {
-	Id      uint32      `json:"id,omitempty"`
-	Version string      `json:"jsonrpc,omitempty"`
-	Result  interface{} `json:"result,omitempty"`
-	Error   *Error      `json:"error,omitempty"`
+	Id      interface{} `json:"id"`
+	Version string      `json:"jsonrpc"`
+	Result  interface{} `json:"result"`
+	Error   *util.Error `json:"error"`
 }
 
 // error returns an error response to the http client.
 func (r *Response) error(w http.ResponseWriter, httpStatus, code int, message string) {
-	r.Error = &Error{
+	r.Error = &util.Error{
 		Code:    code,
 		Message: message,
 	}
@@ -63,6 +54,7 @@ func (r *Response) error(w http.ResponseWriter, httpStatus, code int, message st
 
 // write returns a normal response to the http client.
 func (r *Response) write(w http.ResponseWriter, httpStatus int) {
+	r.Version = Version
 	w.Header().Set("Content-Type", "application/json;charset=utf-8")
 	w.WriteHeader(httpStatus)
 	data, _ := json.Marshal(r)
@@ -166,7 +158,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Warn("HTTP JSON RPC Handle - json.Unmarshal: ", err)
 		resp.error(w, http.StatusBadRequest, ParseError,
-			"rpc json parse err:"+err.Error())
+			fmt.Sprintf("json parse failed: %s",err))
 		return
 	}
 
@@ -175,13 +167,13 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	if len(req.Method) == 0 {
 		resp.error(w, http.StatusBadRequest, InvalidRequest,
-			"need a method!")
+			"method parameter not found")
 		return
 	}
 	handler, ok := s.handlers[req.Method]
 	if !ok {
 		resp.error(w, http.StatusNotFound, MethodNotFound,
-			"method "+req.Method+" not found")
+			fmt.Sprintf("method %s not found", req.Method))
 		return
 	}
 
@@ -205,8 +197,16 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	result, err := handler(params)
 	if err != nil {
-		resp.error(w, http.StatusInternalServerError, InternalError,
-			"internal err: "+err.Error())
+		code := InternalError
+		message := fmt.Sprintf("internal error: %s", err)
+
+		switch e := err.(type) {
+		case *util.Error:
+			code = e.Code
+			message = e.Message
+		}
+
+		resp.error(w, http.StatusInternalServerError, code, message)
 		return
 	}
 
