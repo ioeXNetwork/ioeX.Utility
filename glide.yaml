@@ -1,4 +1,4 @@
-package: github.com/ioex/ioex.utility
+package: github.com/ioeXNetwork/ioex.utility
 import:
 - package: golang.org/x/crypto
   repo:  https://github.com/golang/crypto.git

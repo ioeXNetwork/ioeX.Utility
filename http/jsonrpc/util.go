@@ -49,7 +49,7 @@ func CallParams(url, method string, params util.Params) (interface{}, error) {
 }
 
 // CallArray is a util method to send a JSON-RPC request to server.
-func CallArray(url, method string, params ...interface{}) (interface{}, error) {
+func CallArray(url, method string, params... interface{}) (interface{}, error) {
 	req := Request{
 		Method: method,
 		Params: params,
