@@ -84,7 +84,8 @@ func StringToFixed64(s string) (*Fixed64, error) {
 	var buffer bytes.Buffer
 	//TODO: check invalid string
 	di := strings.Index(s, ".")
-	if len(s)-di > 10 { //hungjiun 20181011
+	//if len(s)-di > 10 { //hungjiun 20181011
+	if len(s)-di > 15 { //hungjiun 20210615
 		return nil, errors.New("unsupported precision")
 	}
 	if di == -1 {
